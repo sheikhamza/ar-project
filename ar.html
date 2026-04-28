@@ -8,19 +8,20 @@
 
 <body style="margin:0; background:black;">
 
-<model-viewer 
+<model-viewer
   id="viewer"
   ar
   ar-modes="scene-viewer webxr quick-look"
   camera-controls
   auto-rotate
-  rotation-per-second="30deg"
-  shadow-intensity="1"
-  exposure="1.2"
+  rotation-per-second="25deg"
   environment-image="neutral"
-  tone-mapping="aces"
-  style="width:100%; height:100vh;">
-
+  exposure="1.5"
+  shadow-intensity="1"
+  camera-orbit="0deg 75deg 2.5m"
+  min-camera-orbit="auto auto 1m"
+  max-camera-orbit="auto auto 5m"
+  style="width:100%; height:100vh; background:#000;">
 </model-viewer>
 
 <script>
@@ -30,12 +31,11 @@
   const viewer = document.getElementById("viewer");
 
   if (model) {
-    viewer.src = new URL(model, window.location.href).href;
+    const url = new URL(model, window.location.href).href;
+    viewer.src = url;
 
-    // 🔥 IMPORTANT: auto framing fix
     viewer.addEventListener("load", () => {
-      viewer.cameraTarget = "auto auto auto";
-      viewer.fieldOfView = "45deg";
+      viewer.cameraTarget = "0m 0m 0m";
     });
 
   } else {
