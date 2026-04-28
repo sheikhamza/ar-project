@@ -11,12 +11,13 @@
 <model-viewer 
   id="viewer"
   ar
+  ar-modes="scene-viewer webxr quick-look"
+  ar-button
   camera-controls
   auto-rotate
-  environment-image="neutral"
-  shadow-intensity="1"
-  camera-orbit="0deg 75deg 2.5m"
-  field-of-view="45deg">
+  exposure="1.2"
+tone-mapping="aces"
+  style="width:100%; height:100vh; background:#eee;">
 </model-viewer>
 <script>
   const params = new URLSearchParams(window.location.search);
