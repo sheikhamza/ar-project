@@ -36,6 +36,10 @@
   if (model) {
     document.getElementById("viewer").src = model;
   }
+
+  if (!navigator.xr) {
+    alert("Your device does not support AR 😔");
+  }
 </script>
 
 </body>
