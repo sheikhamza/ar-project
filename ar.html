@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>3D AR View</title>
+  <title>AR View</title>
 
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      background: black;
-    }
-    model-viewer {
-      width: 100%;
-      height: 100vh;
-    }
+    body { margin: 0; background: transparent; }
+    model-viewer { width: 100%; height: 100vh; }
   </style>
 </head>
 
@@ -27,8 +21,11 @@
   auto-rotate
   rotation-per-second="25deg"
   shadow-intensity="1"
+  shadow-softness="1"
   exposure="1.2"
   environment-image="neutral"
+  tone-mapping="aces"
+  xr-environment
   ar-placement="floor"
   style="width:100%; height:100vh;">
 </model-viewer>
@@ -37,12 +34,8 @@
   const params = new URLSearchParams(window.location.search);
   const model = params.get('model');
 
-  const viewer = document.getElementById("viewer");
-
   if (model) {
-    viewer.src = model;
-  } else {
-    alert("No model found");
+    document.getElementById("viewer").src = model;
   }
 </script>
 
