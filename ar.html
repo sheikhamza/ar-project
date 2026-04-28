@@ -3,7 +3,6 @@
 <head>
   <title>AR View</title>
 
-  <!-- model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 
@@ -12,10 +11,11 @@
 <model-viewer 
   id="viewer"
   ar
-  ar-modes="webxr scene-viewer quick-look"
+  ar-modes="scene-viewer webxr quick-look"
+  ar-button
   camera-controls
   auto-rotate
-  style="width: 100%; height: 100vh;">
+  style="width:100%; height:100vh; background:#eee;">
 </model-viewer>
 
 <script>
@@ -23,7 +23,9 @@
   const model = params.get('model');
 
   if (model) {
-    document.getElementById("viewer").setAttribute("src", model);
+    document.getElementById("viewer").src = model;
+  } else {
+    document.body.innerHTML = "No model found ❌";
   }
 </script>
 
