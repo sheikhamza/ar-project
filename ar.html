@@ -149,6 +149,18 @@ AFRAME.registerComponent('drag-rotate', {
     el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
   }
 
+  function zoomOut() {
+    let el = document.querySelector('#model');
+    let s = el.getAttribute('scale');
+
+    let newScale = s.x - 0.1;
+
+    // ❗ minimum limit (warna model gayab ho jayega)
+    if (newScale < 0.1) return;
+
+    el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
+  }
+
   function rotateLeft() {
     let el = document.querySelector('#model');
     let r = el.getAttribute('rotation');
