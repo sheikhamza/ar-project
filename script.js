@@ -63,7 +63,7 @@ function rotateRight() {
 
 AFRAME.registerComponent('drag-rotate', {
   init: function () {
-    let el = this.el;
+    let el = document.querySelector('#model');
     let isDragging = false;
     let previousX = 0;
     let previousY = 0;
@@ -77,6 +77,7 @@ AFRAME.registerComponent('drag-rotate', {
         isDragging = true;
         previousX = e.clientX;
         previousY = e.clientY;
+
       });
 
       window.addEventListener('mouseup', () => {
