@@ -7,7 +7,14 @@
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 </head>
-
+<style>
+button {
+  padding: 10px;
+  margin: 5px;
+  font-size: 18px;
+  border-radius: 8px;
+}
+</style>
 <body style="margin:0; overflow:hidden;">
 
 <a-scene 
@@ -96,6 +103,8 @@ AFRAME.registerComponent('drag-rotate', {
 <div style="position:fixed; bottom:20px; left:20px; z-index:999;">
   <button onclick="zoomIn()">+</button>
   <button onclick="zoomOut()">-</button>
+  <button onclick="rotateLeft()">⟲</button>
+  <button onclick="rotateRight()">⟳</button>
 </div>
 
 <script>
@@ -111,6 +120,23 @@ function zoomOut() {
   let s = el.getAttribute('scale');
   let newScale = s.x - 0.1;
   el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
+}
+</script>
+<script>
+function rotateLeft() {
+  let el = document.querySelector('#model');
+  let r = el.getAttribute('rotation');
+
+  let newY = r.y - 15; // 15 degree left
+  el.setAttribute('rotation', `0 ${newY} 0`);
+}
+
+function rotateRight() {
+  let el = document.querySelector('#model');
+  let r = el.getAttribute('rotation');
+
+  let newY = r.y + 15; // 15 degree right
+  el.setAttribute('rotation', `0 ${newY} 0`);
 }
 </script>
 
