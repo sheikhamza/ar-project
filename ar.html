@@ -1,55 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8" />
   <title>AR View</title>
-   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 
 <body style="margin:0;">
 
-<model-viewer 
-  id="viewer"
-  ar
-  ar-modes="scene-viewer webxr quick-look"
-  camera-controls
-  auto-rotate
-  rotation-per-second="30deg"
-  shadow-intensity="1"
-  exposure="1.2"
-  environment-image="neutral"
-  tone-mapping="aces"
-  style="width:100%; height:100vh;">
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-</model-viewer>
-<!-- 
-<a-scene embedded arjs>
-
+  <!-- Hiro Marker -->
   <a-marker preset="hiro">
-    <a-image id="arImage" scale="2 2 2" position="0 0 0"></a-image>
+
+    <!-- 3D MODEL (DYNAMIC) -->
+    <a-entity id="model"
+      gltf-model=""
+      scale="0.5 0.5 0.5"
+      position="0 0 0">
+    </a-entity>
+
   </a-marker>
 
   <a-entity camera></a-entity>
 
-</a-scene> -->
+</a-scene>
 
 <script>
   const params = new URLSearchParams(window.location.search);
-  const model = params.get('model');
+  const model = params.get("model");
 
-  const viewer = document.getElementById("viewer");
-
-  if (model) {
-    const url = new URL(model, window.location.href).href;
-    viewer.src = url;
-
-    viewer.addEventListener("load", () => {
-      viewer.cameraTarget = "0m 0m 0m";
-    });
-
-  } else {
-    document.body.innerHTML = "No model found ❌";
+  if(model){
+    document.querySelector("#model").setAttribute("gltf-model", model);
   }
 </script>
 
