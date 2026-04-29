@@ -10,7 +10,9 @@
 
 <body style="margin:0; overflow:hidden;">
 
-<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+<a-scene 
+  embedded 
+  arjs="sourceType: webcam; debugUIEnabled: false;">
 
   <a-marker preset="hiro">
 
@@ -20,7 +22,7 @@
       scale="0.5 0.5 0.5"
       position="0 0 0"
       rotation="0 0 0"
-      gesture-handler>
+      drag-rotate>
     </a-entity>
 
   </a-marker>
@@ -29,94 +31,97 @@
 
 </a-scene>
 
+<!-- ROTATE FIX -->
 <script>
-AFRAME.registerComponent('gesture-handler', {
-
+AFRAME.registerComponent('drag-rotate', {
   init: function () {
-    const el = this.el;
+    let el = this.el;
+    let isDragging = false;
+    let previousX = 0;
 
-    let scale = 0.5;
-    let rotationY = 0;
+    this.el.sceneEl.addEventListener('loaded', () => {
 
-    let lastTouchX = null;
-    let lastDistance = null;
+      const canvas = this.el.sceneEl.canvas;
 
-    // TOUCH START
-    window.addEventListener('touchstart', (e) => {
+      canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        previousX = e.clientX;
+      });
 
-      if (e.touches.length === 2) {
-        let dx = e.touches[0].pageX - e.touches[1].pageX;
-        let dy = e.touches[0].pageY - e.touches[1].pageY;
-        lastDistance = Math.sqrt(dx * dx + dy * dy);
-      }
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
 
-      if (e.touches.length === 1) {
-        lastTouchX = e.touches[0].pageX;
-      }
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
 
-    });
+        let deltaX = e.clientX - previousX;
+        previousX = e.clientX;
 
-    // TOUCH MOVE
-    window.addEventListener('touchmove', (e) => {
+        let rotation = el.getAttribute('rotation');
+        rotation.y += deltaX * 0.5;
 
-      // ZOOM (pinch)
-      if (e.touches.length === 2) {
+        el.setAttribute('rotation', rotation);
+      });
 
-        let dx = e.touches[0].pageX - e.touches[1].pageX;
-        let dy = e.touches[0].pageY - e.touches[1].pageY;
-        let newDistance = Math.sqrt(dx * dx + dy * dy);
+      // MOBILE
+      canvas.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        previousX = e.touches[0].clientX;
+      });
 
-        if (lastDistance) {
-          let change = newDistance / lastDistance;
+      window.addEventListener('touchend', () => {
+        isDragging = false;
+      });
 
-          scale *= change;
-          scale = Math.min(Math.max(0.2, scale), 3);
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
 
-          el.setAttribute('scale', `${scale} ${scale} ${scale}`);
-        }
+        let deltaX = e.touches[0].clientX - previousX;
+        previousX = e.touches[0].clientX;
 
-        lastDistance = newDistance;
-      }
+        let rotation = el.getAttribute('rotation');
+        rotation.y += deltaX * 0.5;
 
-      // ROTATE
-      if (e.touches.length === 1) {
+        el.setAttribute('rotation', rotation);
+      });
 
-        let x = e.touches[0].pageX;
-
-        if (lastTouchX !== null) {
-          rotationY += (x - lastTouchX) * 0.5;
-          el.setAttribute('rotation', `0 ${rotationY} 0`);
-        }
-
-        lastTouchX = x;
-      }
-
-    });
-
-    window.addEventListener('touchend', () => {
-      lastTouchX = null;
-      lastDistance = null;
-    });
-
-    // DESKTOP ZOOM
-    window.addEventListener('wheel', (e) => {
-      scale += e.deltaY * -0.001;
-      scale = Math.min(Math.max(0.2, scale), 3);
-      el.setAttribute('scale', `${scale} ${scale} ${scale}`);
     });
 
   }
-
 });
 </script>
 
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const model = params.get("model");
+<!-- ZOOM BUTTONS -->
+<div style="position:fixed; bottom:20px; left:20px; z-index:999;">
+  <button onclick="zoomIn()">+</button>
+  <button onclick="zoomOut()">-</button>
+</div>
 
-  if(model){
-    document.querySelector("#model").setAttribute("gltf-model", model);
-  }
+<script>
+function zoomIn() {
+  let el = document.querySelector('#model');
+  let s = el.getAttribute('scale');
+  let newScale = s.x + 0.1;
+  el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
+}
+
+function zoomOut() {
+  let el = document.querySelector('#model');
+  let s = el.getAttribute('scale');
+  let newScale = s.x - 0.1;
+  el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
+}
+</script>
+
+<!-- DYNAMIC MODEL LOAD (IMPORTANT 🔥) -->
+<script>
+const params = new URLSearchParams(window.location.search);
+const model = params.get("model");
+
+if(model){
+  document.querySelector("#model").setAttribute("gltf-model", model);
+}
 </script>
 
 </body>
