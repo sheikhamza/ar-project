@@ -2,24 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>AR View</title>
 
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
 </head>
 
-<body style="margin:0;">
+<body style="margin:0; overflow:hidden;">
 
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-  <!-- Hiro Marker -->
   <a-marker preset="hiro">
 
-    <!-- 3D MODEL (DYNAMIC) -->
     <a-entity id="model"
-      gltf-model=""
+      gltf-model="model.glb"
       scale="0.5 0.5 0.5"
-      position="0 0 0">
+      position="0 0 0"
+      rotation="0 0 0"
+      gesture-handler>
     </a-entity>
 
   </a-marker>
@@ -28,13 +28,56 @@
 
 </a-scene>
 
+<!-- Gesture system -->
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const model = params.get("model");
+AFRAME.registerComponent('gesture-handler', {
+  init: function () {
+    let el = this.el;
 
-  if(model){
-    document.querySelector("#model").setAttribute("gltf-model", model);
+    let initialScale = el.getAttribute('scale');
+    let currentScale = {x: initialScale.x, y: initialScale.y, z: initialScale.z};
+
+    let rotation = 0;
+
+    // Two finger zoom (pinch simulation basic)
+    let distance = null;
+
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches.length === 2) {
+
+        let dx = e.touches[0].pageX - e.touches[1].pageX;
+        let dy = e.touches[0].pageY - e.touches[1].pageY;
+
+        let newDistance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance) {
+          let scaleChange = newDistance / distance;
+
+          currentScale.x *= scaleChange;
+          currentScale.y *= scaleChange;
+          currentScale.z *= scaleChange;
+
+          el.setAttribute('scale', currentScale);
+        }
+
+        distance = newDistance;
+      }
+    });
+
+    window.addEventListener('touchend', function () {
+      distance = null;
+    });
+
+    // Simple rotate with touch drag
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches.length === 1) {
+        rotation += 2;
+        el.setAttribute('rotation', '0 ' + rotation + ' 0');
+      }
+    });
+
   }
+});
 </script>
 
 </body>
