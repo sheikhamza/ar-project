@@ -74,9 +74,12 @@ AFRAME.registerComponent('drag-rotate', {
 
       // DESKTOP
       canvas.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        previousX = e.clientX;
-        previousY = e.clientY;
+       let el = document.querySelector('#model');
+    let r = el.getAttribute('rotation');
+
+    let newX = r.x + 15; // down rotation
+    el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
+
 
       });
 
