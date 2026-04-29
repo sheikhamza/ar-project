@@ -104,8 +104,8 @@ AFRAME.registerComponent('drag-rotate', {
 
         let rotation = el.getAttribute('rotation');
 
-        rotation.y += deltaX * 0.5; // left/right
-        rotation.x += deltaY * 0.5; // up/down
+        rotation.y += deltaX * 0.3; // left/right
+        rotation.x += deltaY * 0.3; // up/down
 
         el.setAttribute('rotation', rotation);
       });
