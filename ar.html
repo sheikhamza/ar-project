@@ -126,61 +126,54 @@ AFRAME.registerComponent('drag-rotate', {
 </div>
 
 <script>
-function rotateUp() {
-  let el = document.querySelector('#model');
-  let r = el.getAttribute('rotation');
+  function rotateUp() {
+    let el = document.querySelector('#model');
+    let r = el.getAttribute('rotation');
 
-  let newX = r.x - 15; // up rotation
-  el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
-}
+    let newX = r.x - 15; // up rotation
+    el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
+  }
 
-function rotateDown() {
-  let el = document.querySelector('#model');
-  let r = el.getAttribute('rotation');
+  function rotateDown() {
+    let el = document.querySelector('#model');
+    let r = el.getAttribute('rotation');
 
-  let newX = r.x + 15; // down rotation
-  el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
-}
+    let newX = r.x + 15; // down rotation
+    el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
+  }
 
-function zoomIn() {
-  let el = document.querySelector('#model');
-  let s = el.getAttribute('scale');
-  let newScale = s.x + 0.1;
-  el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
-}
+  function zoomIn() {
+    let el = document.querySelector('#model');
+    let s = el.getAttribute('scale');
+    let newScale = s.x + 0.1;
+    el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
+  }
 
-function zoomOut() {
-  let el = document.querySelector('#model');
-  let s = el.getAttribute('scale');
-  let newScale = s.x - 0.1;
-  el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
-}
+  function rotateLeft() {
+    let el = document.querySelector('#model');
+    let r = el.getAttribute('rotation');
 
-function rotateLeft() {
-  let el = document.querySelector('#model');
-  let r = el.getAttribute('rotation');
+    let newY = r.y - 15;
+    el.setAttribute('rotation', `${r.x} ${newY} ${r.z}`);
+  }
 
-  let newY = r.y - 15; // 15 degree left
-  el.setAttribute('rotation', `0 ${newY} 0`);
-}
+  function rotateRight() {
+    let el = document.querySelector('#model');
+    let r = el.getAttribute('rotation');
 
-function rotateRight() {
-  let el = document.querySelector('#model');
-  let r = el.getAttribute('rotation');
-
-  let newY = r.y + 15; // 15 degree right
-  el.setAttribute('rotation', `0 ${newY} 0`);
-}
+    let newY = r.y + 15;
+    el.setAttribute('rotation', `${r.x} ${newY} ${r.z}`);
+  }
 </script>
 
 <!-- DYNAMIC MODEL LOAD (IMPORTANT 🔥) -->
 <script>
-const params = new URLSearchParams(window.location.search);
-const model = params.get("model");
+  const params = new URLSearchParams(window.location.search);
+  const model = params.get("model");
 
-if(model){
-  document.querySelector("#model").setAttribute("gltf-model", model);
-}
+  if(model){
+    document.querySelector("#model").setAttribute("gltf-model", model);
+  }
 </script>
 
 </body>
