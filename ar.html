@@ -45,14 +45,17 @@ AFRAME.registerComponent('drag-rotate', {
     let el = this.el;
     let isDragging = false;
     let previousX = 0;
+    let previousY = 0;
 
     this.el.sceneEl.addEventListener('loaded', () => {
 
       const canvas = this.el.sceneEl.canvas;
 
+      // DESKTOP
       canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
         previousX = e.clientX;
+        previousY = e.clientY;
       });
 
       window.addEventListener('mouseup', () => {
@@ -63,10 +66,18 @@ AFRAME.registerComponent('drag-rotate', {
         if (!isDragging) return;
 
         let deltaX = e.clientX - previousX;
+        let deltaY = e.clientY - previousY;
+
         previousX = e.clientX;
+        previousY = e.clientY;
 
         let rotation = el.getAttribute('rotation');
+
+        // Y axis (left/right)
         rotation.y += deltaX * 0.5;
+
+        // X axis (up/down)
+        rotation.x += deltaY * 0.5;
 
         el.setAttribute('rotation', rotation);
       });
@@ -75,6 +86,7 @@ AFRAME.registerComponent('drag-rotate', {
       canvas.addEventListener('touchstart', (e) => {
         isDragging = true;
         previousX = e.touches[0].clientX;
+        previousY = e.touches[0].clientY;
       });
 
       window.addEventListener('touchend', () => {
@@ -85,16 +97,20 @@ AFRAME.registerComponent('drag-rotate', {
         if (!isDragging) return;
 
         let deltaX = e.touches[0].clientX - previousX;
+        let deltaY = e.touches[0].clientY - previousY;
+
         previousX = e.touches[0].clientX;
+        previousY = e.touches[0].clientY;
 
         let rotation = el.getAttribute('rotation');
-        rotation.y += deltaX * 0.5;
+
+        rotation.y += deltaX * 0.5; // left/right
+        rotation.x += deltaY * 0.5; // up/down
 
         el.setAttribute('rotation', rotation);
       });
 
     });
-
   }
 });
 </script>
@@ -105,9 +121,27 @@ AFRAME.registerComponent('drag-rotate', {
   <button onclick="zoomOut()">-</button>
   <button onclick="rotateLeft()">⟲</button>
   <button onclick="rotateRight()">⟳</button>
+  <button onclick="rotateUp()">↑</button>
+  <button onclick="rotateDown()">↓</button>
 </div>
 
 <script>
+function rotateUp() {
+  let el = document.querySelector('#model');
+  let r = el.getAttribute('rotation');
+
+  let newX = r.x - 15; // up rotation
+  el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
+}
+
+function rotateDown() {
+  let el = document.querySelector('#model');
+  let r = el.getAttribute('rotation');
+
+  let newX = r.x + 15; // down rotation
+  el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
+}
+
 function zoomIn() {
   let el = document.querySelector('#model');
   let s = el.getAttribute('scale');
@@ -121,8 +155,7 @@ function zoomOut() {
   let newScale = s.x - 0.1;
   el.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
 }
-</script>
-<script>
+
 function rotateLeft() {
   let el = document.querySelector('#model');
   let r = el.getAttribute('rotation');
