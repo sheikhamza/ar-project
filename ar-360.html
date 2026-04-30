@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>AR Image 360 View</title>
+
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+</head>
+
+<style>
+button {
+  padding: 10px;
+  margin: 5px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+</style>
+
+<body style="margin:0; overflow:hidden;">
+
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+
+  <a-marker preset="hiro">
+
+    <!-- IMAGE INSTEAD OF 3D -->
+    <a-image 
+      id="product"
+      src=""
+      position="0 0.5 0"
+      width="2"
+      height="2">
+    </a-image>
+
+  </a-marker>
+
+  <a-entity camera></a-entity>
+</a-scene>
+
+<!-- CONTROLS -->
+<div style="position:fixed; bottom:20px; left:20px; z-index:999;">
+  <button onclick="prev()">⬅</button>
+  <button onclick="next()">➡</button>
+</div>
+
+<script>
+/* 👇 MULTI IMAGES ARRAY (CHANGE THESE) */
+const images = [
+  "images/burger/front.png",
+  "images/burger/left.png",
+  "images/burger/back.png",
+  "images/burger/right.png"
+];
+
+let index = 0;
+
+/* 👇 GET IMAGE FROM URL (OPTIONAL START IMAGE) */
+const params = new URLSearchParams(window.location.search);
+const startImg = params.get("img");
+
+if(startImg){
+  images[0] = startImg;
+}
+
+/* 👇 SET FIRST IMAGE */
+const product = document.querySelector("#product");
+
+window.onload = () => {
+  product.setAttribute("src", images[index]);
+};
+
+/* 👇 SWITCH FUNCTIONS */
+function next(){
+  index = (index + 1) % images.length;
+  product.setAttribute("src", images[index]);
+}
+
+function prev(){
+  index = (index - 1 + images.length) % images.length;
+  product.setAttribute("src", images[index]);
+}
+</script>
+
+</body>
+</html>
