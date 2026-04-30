@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>AR Image 360 View</title>
+  <title>AR 360 View</title>
 
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
@@ -23,10 +23,8 @@ button {
 
   <a-marker preset="hiro">
 
-    <!-- IMAGE INSTEAD OF 3D -->
     <a-image 
       id="product"
-      src=""
       position="0 0.5 0"
       width="2"
       height="2">
@@ -44,36 +42,40 @@ button {
 </div>
 
 <script>
-/* 👇 MULTI IMAGES ARRAY (CHANGE THESE) */
-const images = [
-  "images/burger/front.png",
-  "images/burger/left.png",
-  "images/burger/back.png"
-];
-
-let index = 0;
-
-/* 👇 GET IMAGE FROM URL (OPTIONAL START IMAGE) */
+// 🔥 GET PRODUCT NAME FROM URL
 const params = new URLSearchParams(window.location.search);
-const startImg = params.get("img");
+const productName = params.get("product") || "burger";
 
-if(startImg){
-  images[0] = startImg;
+// 🔥 TOTAL IMAGES (CHANGE PER PRODUCT)
+const totalImages = 3;
+
+// 🔥 GENERATE IMAGE PATHS AUTOMATICALLY
+let images = [];
+
+for(let i = 1; i <= totalImages; i++){
+  images.push(`images/${productName}/${i}.png`);
 }
 
-/* 👇 SET FIRST IMAGE */
+// 👉 Example result:
+// images/burger/1.png
+// images/burger/2.png
+// images/burger/3.png
+
+let index = 0;
 const product = document.querySelector("#product");
 
+// ✅ LOAD FIRST IMAGE
 window.onload = () => {
   product.setAttribute("src", images[index]);
 };
 
-/* 👇 SWITCH FUNCTIONS */
+// ✅ NEXT
 function next(){
   index = (index + 1) % images.length;
   product.setAttribute("src", images[index]);
 }
 
+// ✅ PREV
 function prev(){
   index = (index - 1 + images.length) % images.length;
   product.setAttribute("src", images[index]);
