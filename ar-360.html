@@ -52,32 +52,40 @@ button {
 
   let images = [];
   const assets = document.querySelector("#assets");
+  const product = document.querySelector("#product");
 
-  // ✅ dynamically preload images
+  let loaded = 0;
+  let index = 0;
+
   for(let i = 1; i <= totalImages; i++){
     let img = document.createElement("img");
     img.setAttribute("id", `img${i}`);
     img.setAttribute("src", `images/${productName}/${i}.png`);
-    assets.appendChild(img);
 
+    img.onload = () => {
+      loaded++;
+
+      // ✅ ONLY HERE set first image
+      if(loaded === totalImages){
+        product.setAttribute("src", images[0]);
+      }
+    };
+
+    img.onerror = () => {
+      console.log("Image failed:", img.src);
+    };
+
+    assets.appendChild(img);
     images.push(`#img${i}`);
   }
 
-  let index = 0;
-  const product = document.querySelector("#product");
-
-  // ✅ wait for assets load
-  window.onload = () => {
-    setTimeout(() => {
-      product.setAttribute("src", images[index]);
-    }, 500); // small delay for AR
-  };
-
+  // ✅ NEXT
   function next(){
     index = (index + 1) % images.length;
     product.setAttribute("src", images[index]);
   }
 
+  // ✅ PREV
   function prev(){
     index = (index - 1 + images.length) % images.length;
     product.setAttribute("src", images[index]);
