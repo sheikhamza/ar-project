@@ -57,6 +57,7 @@ button {
   let loaded = 0;
   let index = 0;
 
+  // 🔥 LOAD IMAGES
   for(let i = 1; i <= totalImages; i++){
     let img = document.createElement("img");
     img.setAttribute("id", `img${i}`);
@@ -64,32 +65,57 @@ button {
 
     img.onload = () => {
       loaded++;
-
-      // ✅ ONLY HERE set first image
       if(loaded === totalImages){
         product.setAttribute("src", images[0]);
+        startAutoRotate(); // 🔥 start spin
       }
-    };
-
-    img.onerror = () => {
-      console.log("Image failed:", img.src);
     };
 
     assets.appendChild(img);
     images.push(`#img${i}`);
   }
 
-  // ✅ NEXT
-  function next(){
-    index = (index + 1) % images.length;
-    product.setAttribute("src", images[index]);
+  // 🔥 AUTO ROTATE
+  let autoRotate;
+
+  function startAutoRotate(){
+    autoRotate = setInterval(() => {
+      index = (index + 1) % images.length;
+      product.setAttribute("src", images[index]);
+    }, 800); // speed control (lower = faster)
   }
 
-  // ✅ PREV
-  function prev(){
-    index = (index - 1 + images.length) % images.length;
-    product.setAttribute("src", images[index]);
-  }
+  // 🔥 DRAG ROTATION
+  let startX = 0;
+  let isDragging = false;
+
+  document.addEventListener("touchstart", (e) => {
+    clearInterval(autoRotate); // stop auto on touch
+    isDragging = true;
+    startX = e.touches[0].clientX;
+  });
+
+  document.addEventListener("touchmove", (e) => {
+    if(!isDragging) return;
+
+    let diff = e.touches[0].clientX - startX;
+
+    if(Math.abs(diff) > 30){ // sensitivity
+      if(diff > 0){
+        index = (index - 1 + images.length) % images.length;
+      } else {
+        index = (index + 1) % images.length;
+      }
+
+      product.setAttribute("src", images[index]);
+      startX = e.touches[0].clientX;
+    }
+  });
+
+  document.addEventListener("touchend", () => {
+    isDragging = false;
+    startAutoRotate(); // resume auto
+  });
 </script>
 
 </body>
