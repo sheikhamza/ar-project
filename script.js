@@ -63,7 +63,7 @@ function rotateRight() {
 
 AFRAME.registerComponent('drag-rotate', {
   init: function () {
-    let el = this.el;
+    let el = document.querySelector('#model');
     let isDragging = false;
     let previousX = 0;
     let previousY = 0;
@@ -74,9 +74,13 @@ AFRAME.registerComponent('drag-rotate', {
 
       // DESKTOP
       canvas.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        previousX = e.clientX;
-        previousY = e.clientY;
+       let el = document.querySelector('#model');
+    let r = el.getAttribute('rotation');
+
+    let newX = r.x + 15; // down rotation
+    el.setAttribute('rotation', `${newX} ${r.y} ${r.z}`);
+
+
       });
 
       window.addEventListener('mouseup', () => {
