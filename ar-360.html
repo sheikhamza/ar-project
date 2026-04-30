@@ -19,21 +19,24 @@ button {
 
 <body style="margin:0; overflow:hidden;">
 
-<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-  <a-marker preset="hiro">
+    <!-- ✅ ASSETS (VERY IMPORTANT) -->
+    <a-assets id="assets"></a-assets>
 
-    <a-image 
-      id="product"
-      position="0 0.5 0"
-      width="2"
-      height="2">
-    </a-image>
+    <a-marker preset="hiro">
 
-  </a-marker>
+      <a-image 
+        id="product"
+        position="0 0.5 0"
+        width="2"
+        height="2">
+      </a-image>
 
-  <a-entity camera></a-entity>
-</a-scene>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
 
 <!-- CONTROLS -->
 <div style="position:fixed; bottom:20px; left:20px; z-index:999;">
@@ -42,44 +45,43 @@ button {
 </div>
 
 <script>
-// 🔥 GET PRODUCT NAME FROM URL
-const params = new URLSearchParams(window.location.search);
-const productName = params.get("product") || "burger";
+  const params = new URLSearchParams(window.location.search);
+  const productName = params.get("product") || "burger";
 
-// 🔥 TOTAL IMAGES (CHANGE PER PRODUCT)
-const totalImages = 3;
+  const totalImages = 3;
 
-// 🔥 GENERATE IMAGE PATHS AUTOMATICALLY
-let images = [];
+  let images = [];
+  const assets = document.querySelector("#assets");
 
-for(let i = 1; i <= totalImages; i++){
-  images.push(`images/${productName}/${i}.png`);
-}
+  // ✅ dynamically preload images
+  for(let i = 1; i <= totalImages; i++){
+    let img = document.createElement("img");
+    img.setAttribute("id", `img${i}`);
+    img.setAttribute("src", `images/${productName}/${i}.png`);
+    assets.appendChild(img);
 
-// 👉 Example result:
-// images/burger/1.png
-// images/burger/2.png
-// images/burger/3.png
+    images.push(`#img${i}`);
+  }
 
-let index = 0;
-const product = document.querySelector("#product");
+  let index = 0;
+  const product = document.querySelector("#product");
 
-// ✅ LOAD FIRST IMAGE
-window.onload = () => {
-  product.setAttribute("src", images[index]);
-};
+  // ✅ wait for assets load
+  window.onload = () => {
+    setTimeout(() => {
+      product.setAttribute("src", images[index]);
+    }, 500); // small delay for AR
+  };
 
-// ✅ NEXT
-function next(){
-  index = (index + 1) % images.length;
-  product.setAttribute("src", images[index]);
-}
+  function next(){
+    index = (index + 1) % images.length;
+    product.setAttribute("src", images[index]);
+  }
 
-// ✅ PREV
-function prev(){
-  index = (index - 1 + images.length) % images.length;
-  product.setAttribute("src", images[index]);
-}
+  function prev(){
+    index = (index - 1 + images.length) % images.length;
+    product.setAttribute("src", images[index]);
+  }
 </script>
 
 </body>
