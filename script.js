@@ -5,7 +5,6 @@ if(model){
     document.querySelector("#model").setAttribute("gltf-model", model);
 }
 
-
 function rotateUp() {
     let el = document.querySelector('#model');
     let r = el.getAttribute('rotation');
@@ -56,9 +55,6 @@ function rotateRight() {
     let newY = r.y + 15;
     el.setAttribute('rotation', `${r.x} ${newY} ${r.z}`);
 }
-
-
-
 
 
 AFRAME.registerComponent('drag-rotate', {
