@@ -49,6 +49,16 @@ button {
   const params = new URLSearchParams(window.location.search);
   const productName = params.get("product") || "burger";
 
+  function next(){
+    index = (index + 1) % images.length;
+    product.setAttribute("src", images[index]);
+  }
+
+  function prev(){
+    index = (index - 1 + images.length) % images.length;
+    product.setAttribute("src", images[index]);
+  }
+
   const totalImages = 3;
 
   let images = [];
