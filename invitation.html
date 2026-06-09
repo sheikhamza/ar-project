@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivory Elegance — Premium Digital Wedding Invitation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Playfair Display & Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css for entrance animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fcfbf7;
+            color: #2c2a27;
+            overflow-x: hidden;
+        }
+        .font-serif-royal {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom Curtains / Luxury Door Reveal Animation */
+        .curtain-panel {
+            transition: transform 1.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .reveal-active .curtain-left {
+            transform: translateX(-100%);
+        }
+        .reveal-active .curtain-right {
+            transform: translateX(100%);
+        }
+        .reveal-active .curtain-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease 0.4s;
+        }
+        /* Scratch card canvas styling */
+        #scratch-canvas {
+            cursor: url('https://img.icons8.com/ios-filled/24/C5A880/coin.png'), auto;
+            touch-action: none;
+        }
+        /* Sparkle effect */
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        .sparkle-dot {
+            position: absolute;
+            background: radial-gradient(circle, #fff 20%, rgba(197,168,128,1) 60%, transparent 100%);
+            border-radius: 50%;
+            animation: sparkle 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen">
+
+    <!-- 1. PREMIUM 3D REVEAL EXPERIENCE (CURTAIN / DOOR OPENING OVERLAY) -->
+    <div id="reveal-overlay" class="curtain-overlay fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/40 backdrop-blur-xs transition-all duration-1000">
+        <!-- Left Curtain -->
+        <div class="curtain-left curtain-panel absolute top-0 left-0 w-1/2 h-full bg-[#1e2421] border-r-4 border-[#c5a880] flex flex-col justify-center items-end pr-4 sm:pr-12 text-right shadow-2xl z-50">
+            <div class="animate__animated animate__fadeInLeft">
+                <h1 class="font-serif-royal text-3xl sm:text-5xl text-[#e6dfd3] font-bold tracking-wide">Mannan <span class="text-[#c5a880]">&amp;</span></h1>
+                <p class="text-[#c5a880] tracking-[0.2em] text-xs sm:text-sm mt-2 uppercase">The Royal Wedding</p>
+            </div>
+        </div>
+        <!-- Right Curtain -->
+        <div class="curtain-right curtain-panel absolute top-0 right-0 w-1/2 h-full bg-[#1e2421] border-l-4 border-[#c5a880] flex flex-col justify-center items-start pl-4 sm:pl-12 text-left shadow-2xl z-50">
+            <div class="animate__animated animate__fadeInRight">
+                <h1 class="font-serif-royal text-3xl sm:text-5xl text-[#e6dfd3] font-bold tracking-wide">Rahima</h1>
+                <p class="text-[#e6dfd3] tracking-[0.2em] text-xs sm:text-sm mt-2 uppercase">Ivory Elegance Edition</p>
+            </div>
+        </div>
+        
+        <!-- Center Floating Luxury Button Overlay -->
+        <div id="reveal-btn-container" class="absolute z-55 text-center transition-all duration-500 scale-100">
+            <div class="p-1 rounded-full bg-gradient-to-tr from-[#c5a880] via-[#f1e5d1] to-[#c5a880] shadow-[0_0_30px_rgba(197,168,128,0.5)]">
+                <button onclick="openInvitation()" class="bg-[#1e2421] text-[#f1e5d1] px-8 py-8 rounded-full font-serif-royal text-lg font-bold tracking-widest uppercase hover:bg-[#c5a880] hover:text-[#1e2421] transition-all duration-500 flex flex-col items-center justify-center border border-[#c5a880] w-36 h-36 focus:outline-none cursor-pointer">
+                    <i class="fa-solid fa-envelope-open text-2xl mb-2 animate-bounce"></i>
+                    <span>Open</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND MUSIC PLAYER CONTROLLER -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="music-toggle" onclick="toggleMusic()" class="bg-[#1e2421]/90 text-[#c5a880] border border-[#c5a880] p-4 rounded-full shadow-2xl hover:bg-[#c5a880] hover:text-[#1e2421] transition-all duration-300 flex items-center justify-center w-12 h-12 focus:outline-none cursor-pointer">
+            <i id="music-icon" class="fa-solid fa-music"></i>
+        </button>
+        <!-- Audio element with premium instrumental theme -->
+        <audio id="bg-audio" loop preload="auto">
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- MAIN MAIN INVITATION CONTENT LAYOUT -->
+    <main class="max-w-4xl mx-auto px-4 py-8 relative">
+        <!-- Floating sparkles background simulation -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <div class="sparkle-dot w-2 h-2 top-1/4 left-10" style="animation-delay: 0s;"></div>
+            <div class="sparkle-dot w-3 h-3 top-1/3 right-12" style="animation-delay: 1.5s;"></div>
+            <div class="sparkle-dot w-2 h-2 top-2/3 left-20" style="animation-delay: 0.8s;"></div>
+            <div class="sparkle-dot w-3 h-3 top-3/4 right-20" style="animation-delay: 2.2s;"></div>
+        </div>
+
+        <!-- 2. HERO / MAIN COVER CARD -->
+        <section class="bg-white border-8 border-double border-[#c5a880] rounded-xl p-8 sm:p-16 text-center shadow-xl relative overflow-hidden my-6">
+            <!-- Classic Damask Corners or Palace Motif Decorative Overlay -->
+            <div class="absolute top-0 left-0 w-24 h-24 border-t-4 border-l-4 border-[#c5a880]/40 rounded-tl-lg m-2"></div>
+            <div class="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-[#c5a880]/40 rounded-tr-lg m-2"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-[#c5a880]/40 rounded-bl-lg m-2"></div>
+            <div class="absolute bottom-0 right-0 w-24 h-24 border-b-4 border-r-4 border-[#c5a880]/40 rounded-br-lg m-2"></div>
+
+            <p class="text-[#c5a880] font-semibold tracking-[0.25em] text-xs uppercase mb-6">The Wedding Celebration of</p>
+            
+            <h2 class="font-serif-royal text-5xl sm:text-7xl font-bold text-[#1e2421] my-4 tracking-wide animate__animated animate__fadeInDown">
+                Mannan &amp; Rahima
+            </h2>
+            
+            <div class="w-24 h-[2px] bg-[#c5a880] mx-auto my-6 relative">
+                <i class="fa-solid fa-heart absolute -top-[7px] left-1/2 -translate-x-1/2 text-xs text-[#c5a880] bg-white px-2"></i>
+            </div>
+            
+            <p class="font-serif-royal text-xl sm:text-2xl text-stone-600 italic max-w-xl mx-auto leading-relaxed">
+                "Together with our families, we joyfully invite you to join us in celebrating our union of love and new beginnings."
+            </p>
+        </section>
+
+        <!-- 3. PHOTO SLIDESHOW / HERO BACKGROUND GALLERY -->
+        <section class="my-12">
+            <div class="relative rounded-xl overflow-hidden shadow-2xl border-4 border-[#c5a880] h-[300px] sm:h-[480px]">
+                <!-- Slide 1 -->
+                <div class="slideshow-item absolute inset-0 transition-opacity duration-1000 opacity-100">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" alt="Wedding Setup" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="slideshow-item absolute inset-0 transition-opacity duration-1000 opacity-0">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80" alt="Wedding Hands" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="slideshow-item absolute inset-0 transition-opacity duration-1000 opacity-0">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80" alt="Celebration" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+                
+                <!-- Caption Text Layer -->
+                <div class="absolute bottom-6 left-6 right-6 text-center text-white">
+                    <p class="font-serif-royal text-2xl drop-shadow-md tracking-wide">Moments to Last Forever</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. INTERACTIVE SCRATCH TO REVEAL DATE CARD -->
+        <section class="bg-white border-2 border-[#c5a880] rounded-xl p-6 sm:p-10 shadow-lg text-center my-12 relative overflow-hidden">
+            <h3 class="font-serif-royal text-2xl text-[#1e2421] font-bold mb-2">Interactive Invitation Card</h3>
+            <p class="text-stone-500 text-sm mb-6">Scratch the card surface using your finger or mouse cursor to reveal our secret wedding date!</p>
+            
+            <div class="relative w-72 h-40 mx-auto bg-stone-50 rounded-lg border border-dashed border-[#c5a880] flex flex-col justify-center items-center shadow-inner overflow-hidden select-none">
+                <!-- Underneath content: Revealed Secret Date -->
+                <div class="text-center p-4">
+                    <p class="text-[#c5a880] font-bold uppercase tracking-wider text-xs">The Big Day</p>
+                    <p class="font-serif-royal text-2xl font-bold text-[#1e2421] mt-1" id="wedding-date">AUGUST 21, 2026</p>
+                    <p class="text-xs text-stone-500 mt-1">Save The Date</p>
+                </div>
+
+                <!-- Scratchable Surface Canvas Layer Overlay -->
+                <canvas id="scratch-canvas" width="288" height="160" class="absolute inset-0 rounded-lg z-10 transition-opacity duration-500"></canvas>
+            </div>
+        </section>
+
+        <!-- 5. LIVE COUNTDOWN TIMER -->
+        <section class="bg-[#1e2421] text-[#f1e5d1] rounded-xl p-8 shadow-xl text-center my-12 border-b-4 border-[#c5a880]">
+            <h3 class="font-serif-royal text-2xl text-[#c5a880] font-semibold tracking-wide mb-6">Counting Down to Forever</h3>
+            
+            <div class="grid grid-cols-4 gap-2 sm:gap-4 max-w-xl mx-auto">
+                <div class="bg-white/5 border border-[#c5a880]/30 rounded-lg p-3 sm:p-4 backdrop-blur-xs">
+                    <span id="days" class="font-serif-royal text-2xl sm:text-4xl font-bold text-white block">00</span>
+                    <span class="text-[10px] sm:text-xs text-[#c5a880] uppercase tracking-widest mt-1 block">Days</span>
+                </div>
+                <div class="bg-white/5 border border-[#c5a880]/30 rounded-lg p-3 sm:p-4 backdrop-blur-xs">
+                    <span id="hours" class="font-serif-royal text-2xl sm:text-4xl font-bold text-white block">00</span>
+                    <span class="text-[10px] sm:text-xs text-[#c5a880] uppercase tracking-widest mt-1 block">Hours</span>
+                </div>
+                <div class="bg-white/5 border border-[#c5a880]/30 rounded-lg p-3 sm:p-4 backdrop-blur-xs">
+                    <span id="minutes" class="font-serif-royal text-2xl sm:text-4xl font-bold text-white block">00</span>
+                    <span class="text-[10px] sm:text-xs text-[#c5a880] uppercase tracking-widest mt-1 block">Mins</span>
+                </div>
+                <div class="bg-white/5 border border-[#c5a880]/30 rounded-lg p-3 sm:p-4 backdrop-blur-xs">
+                    <span id="seconds" class="font-serif-royal text-2xl sm:text-4xl font-bold text-white block">00</span>
+                    <span class="text-[10px] sm:text-xs text-[#c5a880] uppercase tracking-widest mt-1 block">Secs</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. VENUE MAP DETAILS & GOOGLE MAPS LINK INTEGRATION -->
+        <section class="bg-white border-2 border-[#c5a880] rounded-xl overflow-hidden shadow-lg my-12 grid grid-cols-1 md:grid-cols-2">
+            <div class="p-8 flex flex-col justify-center">
+                <span class="text-[#c5a880] uppercase tracking-widest text-xs font-semibold block mb-2">— Location —</span>
+                <h3 class="font-serif-royal text-3xl font-bold text-[#1e2421] mb-4">ZEEBI SAMA BANQUET</h3>
+                <p class="text-stone-600 text-sm leading-relaxed mb-6">
+                    Nazimabad No. 4 D 15/5 Nazimabad, Karachi, Pakistan.
+                </p>
+                <div class="flex items-center text-stone-500 text-xs gap-4 mb-6">
+                    <div><i class="fa-solid fa-clock text-[#c5a880] mr-2"></i> Reception: 7:00 PM</div>
+                    <div><i class="fa-solid fa-star text-[#c5a880] mr-2"></i> Dress Code: Royal / Elegant</div>
+                </div>
+                <a href="https://www.google.com/maps/place/Zebi+Sama+Banquet/@24.9106287,67.0353113,17z"
+                    target="_blank"
+                    class="inline-block bg-[#1e2421] text-[#f1e5d1] border border-[#c5a880] px-6 py-3 rounded-lg text-xs font-bold tracking-widest uppercase text-center hover:bg-[#c5a880] hover:text-[#1e2421] transition-all duration-300">
+                        <i class="fa-solid fa-location-dot mr-2"></i>
+                        Open in Google Maps
+                    </a>
+            </div>
+            <!-- Mock visual map placeholder container structure -->
+            <div class="w-full h-64 md:h-auto min-h-[250px] bg-stone-100 relative">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3618.6291401884105!2d67.0353113!3d24.9106287!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33fa4c7f88717%3A0x96f8433dd35db0ce!2sZebi%20Sama%20Banquet!5e0!3m2!1sen!2s!4v1781024919094!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </section>
+
+        <!-- 7. GUEST MESSAGING INBOX & RSVP FORM REGISTRATION -->
+        <section class="bg-white border-2 border-[#c5a880] rounded-xl p-6 sm:p-10 shadow-lg my-12">
+            <h3 class="font-serif-royal text-2xl text-[#1e2421] font-bold text-center mb-2">Confirm Attendance & Leave Messages</h3>
+            <p class="text-stone-500 text-sm text-center max-w-md mx-auto mb-8">Kindly RSVP to let us know if you can share our special day with us.</p>
+            
+            <form id="rsvp-form" onsubmit="handleRSVP(event)" class="space-y-4 max-w-xl mx-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1">Your Full Name</label>
+                        <input type="text" id="guest-name" required class="w-full p-3 border border-stone-300 rounded-lg text-sm bg-stone-50/50 focus:outline-none focus:border-[#c5a880]" placeholder="e.g. Ali Ahmed">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1">Will you attend?</label>
+                        <select id="guest-status" class="w-full p-3 border border-stone-300 rounded-lg text-sm bg-stone-50/50 focus:outline-none focus:border-[#c5a880]">
+                            <option value="yes">Yes, gladly attending</option>
+                            <option value="no">Sorry, cannot come</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1">Total Companions / Guests Count</label>
+                    <select id="guest-count" class="w-full p-3 border border-stone-300 rounded-lg text-sm bg-stone-50/50 focus:outline-none focus:border-[#c5a880]">
+                        <option value="1">1 Person</option>
+                        <option value="2">2 Persons</option>
+                        <option value="3">3 Persons</option>
+                        <option value="4">4 Persons</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1">Send a Heartfelt Blessings Note</label>
+                    <textarea id="guest-message" rows="3" required class="w-full p-3 border border-stone-300 rounded-lg text-sm bg-stone-50/50 focus:outline-none focus:border-[#c5a880]" placeholder="Write your warm wishes here..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-[#1e2421] text-[#f1e5d1] border border-[#c5a880] py-3 rounded-lg text-xs font-bold tracking-widest uppercase hover:bg-[#c5a880] hover:text-[#1e2421] transition-all duration-300 cursor-pointer">
+                    Submit RSVP Response
+                </button>
+            </form>
+
+            <!-- LIVE INBOX FEED DISPLAY FEEDBACK LIST -->
+            <div class="mt-12 pt-8 border-t border-stone-100 max-w-xl mx-auto">
+                <h4 class="font-serif-royal text-lg text-[#1e2421] font-semibold mb-4"><i class="fa-regular fa-comments text-[#c5a880] mr-2"></i> Shared Wishes Inbox</h4>
+                <div id="wishes-container" class="space-y-4 max-h-60 overflow-y-auto pr-2">
+                    <!-- Default Hardcoded Premium Demo Feed Items -->
+                    <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-[#c5a880]">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-semibold text-xs text-stone-800">Fatima &amp; Zain</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium">Attending</span>
+                        </div>
+                        <p class="text-xs text-stone-600 italic">"Wishing you both a lifetime of absolute joy, infinite blessings, and true happiness together! Can't wait!"</p>
+                    </div>
+                    <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-[#c5a880]">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-semibold text-xs text-stone-800">Omar Khan</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium">Attending</span>
+                        </div>
+                        <p class="text-xs text-stone-600 italic">"Mubarak ho! Super thrilled to celebrate this grand royal luxury event with everyone."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- SYSTEM FUNCTION INTERFACE LOGIC SCRIPT CODES -->
+    <script>
+        // --- 1. REVEAL / CURTAIN OPEN SYSTEM LOGIC ---
+        function openInvitation() {
+            const overlay = document.getElementById('reveal-overlay');
+            const btnContainer = document.getElementById('reveal-btn-container');
+
+            btnContainer.style.transform = 'scale(0)';
+
+            setTimeout(() => {
+
+                overlay.classList.add('reveal-active');
+
+                const audio = document.getElementById('bg-audio');
+                audio.play().catch(() => {
+                    console.log("Audio autoplay restricted.");
+                });
+
+                overlay.addEventListener('transitionend', function handler() {
+                    overlay.classList.remove('fixed');
+                    overlay.removeEventListener('transitionend', handler);
+                });
+
+            }, 900);
+        }
+
+        // --- 2. AUDIO BACKGROUND TOGGLE MANAGEMENT ---
+        function toggleMusic() {
+            const audio = document.getElementById('bg-audio');
+            const icon = document.getElementById('music-icon');
+            if (audio.paused) {
+                audio.play();
+                icon.className = 'fa-solid fa-music animate-spin';
+            } else {
+                audio.pause();
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
+
+        // --- 3. PHOTO SLIDESHOW CYCLE MOTOR ---
+        let slideIndex = 0;
+        const slides = document.querySelectorAll('.slideshow-item');
+        setInterval(() => {
+            slides[slideIndex].classList.replace('opacity-100', 'opacity-0');
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.replace('opacity-0', 'opacity-100');
+        }, 4000);
+
+        // --- 4. INTERACTIVE SCRATCH TO REVEAL ENGINE INTERFACE ---
+        const canvas = document.getElementById('scratch-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        // Initialize canvas slate covering skin layer color palette
+        ctx.fillStyle = '#dfdcd4';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Paint subtle elegant visual texture patterns on overlay layout
+        ctx.font = '13px Montserrat';
+        ctx.fillStyle = '#8b8476';
+        ctx.textAlign = 'center';
+        ctx.fillText('✨ Scratch Here With Coin ✨', canvas.width / 2, canvas.height / 2 + 5);
+
+        function scratch(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            // Unified touch/mouse coordinates fetch standard
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('touchstart', () => isDrawing = true);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        window.addEventListener('touchend', () => isDrawing = false);
+        canvas.addEventListener('mousemove', scratch);
+        canvas.addEventListener('touchmove', scratch);
+
+        // --- 5. LIVE COUNTDOWN SCHEDULER ENGINE ---
+        // Setting event target deadline date timestamp values loop 
+        // const targetDate = new Date('August 21, 2026 19:00:00').getTime();
+        const targetDate = new Date(document.getElementById('wedding-date').innerText).getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference < 0) {
+                document.getElementById('days').innerText = "00";
+                return;
+            }
+
+            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+            document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+            document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // --- 6. RSVP FORM LIVE PROCESSING INBOX FEED ACCUMULATOR ---
+        function handleRSVP(event) {
+            event.preventDefault();
+            const name = document.getElementById('guest-name').value;
+            const status = document.getElementById('guest-status').value;
+            const msg = document.getElementById('guest-message').value;
+            
+            const container = document.getElementById('wishes-container');
+            
+            const itemHTML = `
+                <div class="bg-amber-50/60 p-4 rounded-lg border-l-4 border-[#c5a880] animate__animated animate__fadeInUp">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-xs text-stone-800">${name}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full ${status === 'yes' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'} font-medium">
+                            ${status === 'yes' ? 'Attending' : 'Declined'}
+                        </span>
+                    </div>
+                    <p class="text-xs text-stone-600 italic">"${msg}"</p>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('afterbegin', itemHTML);
+            document.getElementById('rsvp-form').reset();
+            alert('JazakAllah! Your premium RSVP wish response statement has been saved securely.');
+        }
+    </script>
+</body>
+</html>
