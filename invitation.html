@@ -377,9 +377,63 @@
             }
         }
 
+        /* Custom Curtains / Luxury Door Reveal Animation */
+        .curtain-panel {
+            transition: transform 1.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .reveal-active .curtain-left {
+            transform: translateX(-100%);
+        }
+        .reveal-active .curtain-right {
+            transform: translateX(100%);
+        }
+        .reveal-active .curtain-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease 0.4s;
+        }
     </style>
 </head>
 <body class="relative min-h-screen">
+    <!-- 1. PREMIUM 3D REVEAL EXPERIENCE (CURTAIN / DOOR OPENING OVERLAY) -->
+    <div id="reveal-overlay" class="curtain-overlay fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/40 backdrop-blur-xs transition-all duration-1000">
+        <!-- Left Curtain -->
+        <div class="curtain-left curtain-panel absolute top-0 left-0 w-1/2 h-full bg-[#1e2421] border-r-4 border-[#c5a880] flex flex-col justify-center items-end pr-4 sm:pr-12 text-right shadow-2xl z-50">
+            <div class="animate__animated animate__fadeInLeft">
+                <h1 class="font-serif-royal text-3xl sm:text-5xl text-[#e6dfd3] font-bold tracking-wide">Mannan <span class="text-[#c5a880]">&amp;</span></h1>
+                <p class="text-[#c5a880] tracking-[0.2em] text-xs sm:text-sm mt-2 uppercase">The Royal Wedding</p>
+            </div>
+        </div>
+        <!-- Right Curtain -->
+        <div class="curtain-right curtain-panel absolute top-0 right-0 w-1/2 h-full bg-[#1e2421] border-l-4 border-[#c5a880] flex flex-col justify-center items-start pl-4 sm:pl-12 text-left shadow-2xl z-50">
+            <div class="animate__animated animate__fadeInRight">
+                <h1 class="font-serif-royal text-3xl sm:text-5xl text-[#e6dfd3] font-bold tracking-wide">Rahima</h1>
+                <p class="text-[#e6dfd3] tracking-[0.2em] text-xs sm:text-sm mt-2 uppercase">Ivory Elegance Edition</p>
+            </div>
+        </div>
+        
+        <!-- Center Floating Luxury Button Overlay -->
+        <div id="reveal-btn-container" class="absolute z-55 text-center transition-all duration-500 scale-100">
+            <div class="p-1 rounded-full bg-gradient-to-tr from-[#c5a880] via-[#f1e5d1] to-[#c5a880] shadow-[0_0_30px_rgba(197,168,128,0.5)]">
+                <button onclick="openInvitation()" class="bg-[#1e2421] text-[#f1e5d1] px-8 py-8 rounded-full font-serif-royal text-lg font-bold tracking-widest uppercase hover:bg-[#c5a880] hover:text-[#1e2421] transition-all duration-500 flex flex-col items-center justify-center border border-[#c5a880] w-36 h-36 focus:outline-none cursor-pointer">
+                    <i class="fa-solid fa-envelope-open text-2xl mb-2 animate-bounce"></i>
+                    <span>Open</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND MUSIC PLAYER CONTROLLER -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="music-toggle" onclick="toggleMusic()" class="bg-[#1e2421]/90 text-[#c5a880] border border-[#c5a880] p-4 rounded-full shadow-2xl hover:bg-[#c5a880] hover:text-[#1e2421] transition-all duration-300 flex items-center justify-center w-12 h-12 focus:outline-none cursor-pointer">
+            <i id="music-icon" class="fa-solid fa-music"></i>
+        </button>
+        <!-- Audio element with premium instrumental theme -->
+        <audio id="bg-audio" loop preload="auto">
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
     <main>
         <!-- Welcome Section -->
         <section class="lg:min-h-screen bg-cover bg-center flex items-center justify-center welcome-section px-4 sm:px-6 overflow-hidden">
@@ -1195,6 +1249,44 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCountdown();
 
 });
+</script>
+<script>
+    // --- 1. REVEAL / CURTAIN OPEN SYSTEM LOGIC ---
+    function openInvitation() {
+        const overlay = document.getElementById('reveal-overlay');
+        const btnContainer = document.getElementById('reveal-btn-container');
+
+        btnContainer.style.transform = 'scale(0)';
+
+        setTimeout(() => {
+
+            overlay.classList.add('reveal-active');
+
+            const audio = document.getElementById('bg-audio');
+            audio.play().catch(() => {
+                console.log("Audio autoplay restricted.");
+            });
+
+            overlay.addEventListener('transitionend', function handler() {
+                overlay.classList.remove('fixed');
+                overlay.removeEventListener('transitionend', handler);
+            });
+
+        }, 900);
+    }
+
+    // --- 2. AUDIO BACKGROUND TOGGLE MANAGEMENT ---
+    function toggleMusic() {
+        const audio = document.getElementById('bg-audio');
+        const icon = document.getElementById('music-icon');
+        if (audio.paused) {
+            audio.play();
+            icon.className = 'fa-solid fa-music animate-spin';
+        } else {
+            audio.pause();
+            icon.className = 'fa-solid fa-volume-xmark';
+        }
+    }
 </script>
 </body>
 </html>
