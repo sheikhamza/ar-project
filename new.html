@@ -1,180 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Restaurant AR Menu</title>
+    <meta charset="UTF-8">
 
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@master/aframe/build/aframe-ar.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/Marker-Creator/main/dist/marker-creator.umd.js"></script>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-  <style>
-    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
-    #loading{
-      position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
-      background:#fffdf8;color:#8a6500;text-align:center
-    }
-    #loading .box{padding:28px;border:1px solid #d6b35a;border-radius:18px;background:white;max-width:320px}
-    #status{font-size:14px;margin-top:10px;color:#555}
-    #downloadMarker{
-      position:fixed;z-index:30;bottom:18px;left:50%;transform:translateX(-50%);
-      border:0;border-radius:999px;padding:12px 18px;background:#c79b24;color:#fff;font-weight:700;display:none
-    }
-    #markerPreview{display:none}
-  </style>
+    <title>AR Menu Test</title>
+
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@master/aframe/build/aframe-ar.js"></script>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #start {
+            position: fixed;
+            z-index: 9999;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        #start button {
+            border: none;
+            padding: 16px 25px;
+            border-radius: 50px;
+            background: #b8860b;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
-  <div id="loading">
-    <div class="box">
-      <strong>Preparing Restaurant AR…</strong>
-      <div id="status">Generating your custom marker.</div>
-    </div>
-  </div>
 
-  <button id="downloadMarker">Download / Print Marker</button>
-  <canvas id="markerCanvas" width="1000" height="1000" style="display:none"></canvas>
+<div id="start">
+    <button id="startButton">
+        Open AR Camera
+    </button>
+</div>
 
-  <!-- Pattern URL is injected by JavaScript after generating the custom marker. -->
-  <a-scene
+<a-scene
     embedded
-    renderer="colorManagement: true; antialias: true"
-    vr-mode-ui="enabled:false"
-    device-orientation-permission-ui="enabled:false"
-    arjs="sourceType: webcam; detectionMode: mono; matrixCodeType: 3x3; debugUIEnabled:false">
+    vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    arjs="sourceType: webcam; debugUIEnabled: false;"
+>
 
-    <a-assets>
-      <!-- Demo food image. Replace with your own product image later. -->
-      <img id="foodImage"
-        crossorigin="anonymous"
-        src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1000&q=85">
-    </a-assets>
+    <a-marker preset="hiro">
 
-    <a-marker id="restaurantMarker" type="pattern" patternUrl="">
-      <a-entity position="0 0.15 0" rotation="-90 0 0">
-        <a-plane width="1.35" height="1.35" material="src:#foodImage; transparent:true"></a-plane>
-      </a-entity>
+        <a-box
+            position="0 0.5 0"
+            material="color: #B8860B;"
+        >
+        </a-box>
 
-      <a-text
-        value="Today's Special"
-        align="center"
-        color="#ffffff"
-        width="2.2"
-        position="0 0.08 0.72"
-        rotation="-90 0 0">
-      </a-text>
+        <a-text
+            value="GOLDEN BITE"
+            align="center"
+            color="#ffffff"
+            width="3"
+            position="0 1.2 0"
+            rotation="-90 0 0"
+        >
+        </a-text>
+
     </a-marker>
 
     <a-entity camera></a-entity>
-  </a-scene>
+
+</a-scene>
 
 <script>
-/*
-  CUSTOM MARKER
-  White circular center + thick golden border + restaurant name.
-  IMPORTANT: AR.js pattern markers still need a square dark tracking boundary.
-  The visual design is placed inside that tracking area.
-*/
-const RESTAURANT_NAME = "GOLDEN BITE";
-const GOLD = "#B8860B";
-const DARK_GOLD = "#8A6500";
 
-function drawMarker(){
-  const canvas = document.getElementById("markerCanvas");
-  const ctx = canvas.getContext("2d");
-  const w = canvas.width;
+const startButton = document.getElementById("startButton");
+const startScreen = document.getElementById("start");
 
-  // White base.
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0,0,w,w);
+startButton.addEventListener("click", async () => {
 
-  // AR.js-friendly square tracking border.
-  // Keep this dark/golden and thick enough for reliable detection.
-  ctx.fillStyle = DARK_GOLD;
-  ctx.fillRect(0,0,w,w);
+    try {
 
-  // Inner white field.
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(55,55,w-110,w-110);
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: {
+                    ideal: "environment"
+                }
+            },
+            audio: false
+        });
 
-  // Thick golden circular badge.
-  ctx.beginPath();
-  ctx.arc(w/2,w/2,330,0,Math.PI*2);
-  ctx.fillStyle = GOLD;
-  ctx.fill();
+        stream.getTracks().forEach(track => track.stop());
 
-  ctx.beginPath();
-  ctx.arc(w/2,w/2,285,0,Math.PI*2);
-  ctx.fillStyle = "#ffffff";
-  ctx.fill();
+        startScreen.style.display = "none";
 
-  // Small decorative dots to give the pattern more visual features.
-  ctx.fillStyle = GOLD;
-  for(let i=0;i<12;i++){
-    const a = i * Math.PI*2/12;
-    const x = w/2 + Math.cos(a)*245;
-    const y = w/2 + Math.sin(a)*245;
-    ctx.beginPath();
-    ctx.arc(x,y,7,0,Math.PI*2);
-    ctx.fill();
-  }
+        console.log("Camera permission granted");
 
-  // Restaurant name.
-  ctx.fillStyle = "#222222";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = "700 72px Arial";
-  ctx.fillText(RESTAURANT_NAME, w/2, w/2-8);
+    } catch (error) {
 
-  ctx.fillStyle = GOLD;
-  ctx.font = "600 30px Arial";
-  ctx.fillText("SCAN FOR MENU", w/2, w/2+82);
+        console.error("Camera error:", error);
 
-  return canvas.toDataURL("image/png");
-}
+        alert(
+            "Camera permission nahi mili.\n\n" +
+            "Browser settings mein Camera Allow karo."
+        );
 
-function base64Pattern(patternString){
-  // AR.js accepts a data:text/plain;base64 pattern URL.
-  return "data:text/plain;base64," + btoa(unescape(encodeURIComponent(patternString)));
-}
+    }
 
-async function init(){
-  const status = document.getElementById("status");
-  const marker = document.getElementById("restaurantMarker");
-  const download = document.getElementById("downloadMarker");
+});
 
-  try{
-    const imageURL = drawMarker();
-
-    status.textContent = "Encoding custom AR pattern…";
-
-    // Marker-Creator is the official AR.js-compatible pattern generator.
-    // It converts our custom image into an ARToolKit .patt string.
-    window.MarkerCreator.ArPatternFile.encodeImageURL(
-      imageURL,
-      function(patternFileString){
-        marker.setAttribute("patternUrl", base64Pattern(patternFileString));
-
-        status.textContent = "Ready. Point the camera at the printed marker.";
-        document.getElementById("loading").style.display = "none";
-
-        download.style.display = "block";
-        download.onclick = () => {
-          const a = document.createElement("a");
-          a.href = imageURL;
-          a.download = "golden-bite-ar-marker.png";
-          a.click();
-        };
-      }
-    );
-  }catch(err){
-    console.error(err);
-    status.textContent = "Marker generation failed. Check the browser console.";
-  }
-}
-
-window.addEventListener("load", init);
 </script>
+
 </body>
 </html>
